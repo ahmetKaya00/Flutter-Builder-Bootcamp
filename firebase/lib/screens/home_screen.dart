@@ -1,7 +1,9 @@
 import 'package:firebase/core/localization/locale_manager.dart';
+import 'package:firebase/screens/login_screen.dart';
 import 'package:firebase/screens/profile_screen.dart';
 import 'package:firebase/screens/settings_screen.dart';
 import 'package:firebase/widget/bottom_nav_bar.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -19,10 +21,29 @@ class _HomeScreenState extends State<HomeScreen>{
     SettingsScreen(),
   ];
 
-  void _onItemTapped(int index){
-    setState(() {
-      _selectedIndex = index;
-    });
+  void _onItemTapped(int index) async{
+    if(index == 1){
+      final currentUser = FirebaseAuth.instance.currentUser;
+      if(currentUser == null){
+        final result = await Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => LoginScreen()),
+        );
+        if(result == true){
+          setState(() {
+            _selectedIndex = index;
+          });
+        }
+      }else{
+        setState(() {
+          _selectedIndex = index;
+        });
+      }
+    }else{
+      setState(() {
+        _selectedIndex = index;
+      });
+    }
   }
   @override
   Widget build(BuildContext context) {
