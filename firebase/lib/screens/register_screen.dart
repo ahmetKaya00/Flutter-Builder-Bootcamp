@@ -14,13 +14,16 @@ class _RegisterScreenState extends State<RegisterScreen>{
   
   Future _register() async{
     try{
-      await _auth.createUserWithEmailAndPassword(
+     UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
           email: _emailController.text.trim(),
           password: _passwordControlelr.text.trim(),
       );
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Kayıt başarılı!'))
-      );
+      if(userCredential.user != null && !userCredential.user!.emailVerified){
+        await userCredential.user!.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Kayıt Başarılı! Lütfen e-postanıza gelen onay mailine tıklayın.'))
+        );
+      }
     }catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),

@@ -1,4 +1,5 @@
 import 'package:firebase/core/localization/locale_manager.dart';
+import 'package:firebase/screens/crud_screen.dart';
 import 'package:firebase/screens/login_screen.dart';
 import 'package:firebase/screens/profile_screen.dart';
 import 'package:firebase/screens/settings_screen.dart';
@@ -19,6 +20,7 @@ class _HomeScreenState extends State<HomeScreen>{
     Center(child: Text('Ana Sayfa', style: TextStyle(fontSize: 24))),
     ProfileScreen(),
     SettingsScreen(),
+    CrudScreen(),
   ];
 
   void _onItemTapped(int index) async{
@@ -62,6 +64,7 @@ class _HomeScreenState extends State<HomeScreen>{
           ),
           ProfileScreen(),
           SettingsScreen(),
+          CrudScreen(),
         ],
       ),
       bottomNavigationBar: BottomNavBar(selectedIndex: _selectedIndex, onTap: _onItemTapped),

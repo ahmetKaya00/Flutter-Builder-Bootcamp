@@ -1,4 +1,5 @@
 import 'package:firebase/models/authentication_model.dart';
+import 'package:firebase/screens/home_screen.dart';
 import 'package:firebase/screens/register_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -15,8 +16,19 @@ class _LoginScreenState extends State<LoginScreen>{
 
   Future<void> _login() async{
     try{
-      await _authModel.loginWithEmailAndPassword(_emailController.text, _passwordController.text);
-      Navigator.pop(context, true);
+      final user = await _authModel.loginWithEmailAndPassword(_emailController.text, _passwordController.text);
+      //Kullanıcı dğrulanmış mı ?
+      if(user != null && !user.emailVerified){
+        await user.sendEmailVerification();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Lütfen e-postanızı doğrulayın.')),
+        );
+        await _authModel.signOut();
+      }else if(user != null){
+        Navigator.pushReplacement(context,
+          MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      }
     }catch(e){
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(e.toString())),
@@ -54,6 +66,23 @@ class _LoginScreenState extends State<LoginScreen>{
                     );
                   }, 
                   child: Text('Henüz üye değil misiniz ? Hemen üye ol!')),
+            ),
+            SizedBox(height: 10),
+            Center(
+              child: TextButton(
+                  onPressed: () async{
+                    try{
+                      await _authModel.resetPassword(_emailController.text);
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Sifre sıfırlama e-postası gönderildi.'))
+                      );
+                    }catch(e){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(e.toString())),
+                      );
+                    }
+                  },
+                  child: Text('Şifremi Unuttum')),
             )
           ],
         ),
